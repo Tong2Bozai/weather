@@ -1,7 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import html5lib
+from pyecharts import Bar
 
+ALL_DATA = []
 def parse_page(url):
     headers = {
         "Refer":"http://www.weather.com.cn/textFC/xn.shtml",
@@ -23,24 +25,37 @@ def parse_page(url):
             city = list(city_td.stripped_strings)[0]
             temp_td = tds[-2]
             min_temp = list(temp_td.stripped_strings)[0]
+            ALL_DATA.append({'city':city,'min_temp':min_temp})
             # print(min_temp)
-            print({'city':city,'min_temp':min_temp})
+            # print({'city':city,'min_temp':min_temp})
 
 
 def main():
     url_list = [
-        # 'http://www.weather.com.cn/textFC/hb.shtml', # 华北地区
-        # 'http://www.weather.com.cn/textFC/db.shtml', # 东北地区
-        # 'http://www.weather.com.cn/textFC/hd.shtml', # 华东地区
-        # 'http://www.weather.com.cn/textFC/hz.shtml', # 华中地区
-        # 'http://www.weather.com.cn/textFC/hn.shtml', # 华南地区
-        # 'http://www.weather.com.cn/textFC/xb.shtml', # 西北地区
-        # 'http://www.weather.com.cn/textFC/xn.shtml', # 西南地区
+        'http://www.weather.com.cn/textFC/hb.shtml', # 华北地区
+        'http://www.weather.com.cn/textFC/db.shtml', # 东北地区
+        'http://www.weather.com.cn/textFC/hd.shtml', # 华东地区
+        'http://www.weather.com.cn/textFC/hz.shtml', # 华中地区
+        'http://www.weather.com.cn/textFC/hn.shtml', # 华南地区
+        'http://www.weather.com.cn/textFC/xb.shtml', # 西北地区
+        'http://www.weather.com.cn/textFC/xn.shtml', # 西南地区
         'http://www.weather.com.cn/textFC/gat.shtml', # 港澳台地区
     ]
     for url in url_list:
         parse_page(url)
-        break
+    #分析数据
+    #根据最低气温排序
+
+    #按天气最低进行排序，并只取10个
+    ALL_DATA.sort(key=lambda data:data['min_temp'])
+    data = ALL_DATA[0:10]
+    #分别取出所有城市和温度
+    cities = list(map(lambda x:x['city'],data))
+    temps = list(map(lambda x:x['min_temp'],data))
+
+    chart = Bar("中国天气最低气温排行榜")
+    chart.add('',cities,temps)
+    chart.render('temperature.html')
 
 
 if __name__ == '__main__':
