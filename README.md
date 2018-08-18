@@ -4,3 +4,6 @@
 ***
 
 [爬取网址]：http://www.weather.com.cn/textFC/hb.shtml
+
+***
+初步修改能够爬取所有的最高气温、最低气温、天气现象等
